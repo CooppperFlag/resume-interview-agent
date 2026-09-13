@@ -1,0 +1,394 @@
+app:
+  description: ''
+  icon: 🤖
+  icon_background: '#FFEAD5'
+  icon_type: emoji
+  mode: workflow
+  name: 基于 RAG 的简历优化面试 Agent
+  use_icon_as_answer_icon: false
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/siliconflow:0.0.59@8f02741bb210eac68b68263c1cbede0e0637f2d1ad082895906e03253461729c
+    version: null
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/tongyi:0.2.20@83977f8cbc6ccd4a47c3f8a72c454bc42102b20d5b575a2b124d3ebfe92bb226
+    version: null
+kind: app
+version: 0.7.0
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload: {}
+    retriever_resource:
+      enabled: true
+    sensitive_word_avoidance:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: start
+        targetType: llm
+      id: 1788702500333-source-1789294300841-target
+      selected: false
+      source: '1788702500333'
+      sourceHandle: source
+      target: '1789294300841'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: llm
+      id: 1788702738298-source-1789296936522-target
+      selected: false
+      source: '1788702738298'
+      sourceHandle: source
+      target: '1789296936522'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: knowledge-retrieval
+        targetType: llm
+      id: 1788773592769-source-1788702738298-target
+      selected: false
+      source: '1788773592769'
+      sourceHandle: source
+      target: '1788702738298'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: knowledge-retrieval
+      id: 1789294300841-source-1788773592769-target
+      selected: false
+      source: '1789294300841'
+      sourceHandle: source
+      target: '1788773592769'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: end
+      id: 1789296936522-source-1788703279841-target
+      selected: false
+      source: '1789296936522'
+      sourceHandle: source
+      target: '1788703279841'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        selected: false
+        title: 用户输入
+        type: start
+        variables:
+        - default: ''
+          hint: ''
+          label: 简历文本
+          max_length: null
+          options: []
+          placeholder: ''
+          required: true
+          type: paragraph
+          variable: resume_text
+        - default: ''
+          hint: ''
+          label: 目标岗位
+          options: []
+          placeholder: ''
+          required: true
+          type: text-input
+          variable: target_position
+      height: 133
+      id: '1788702500333'
+      position:
+        x: -141.67732900984623
+        y: 194.91247788898897
+      positionAbsolute:
+        x: -141.67732900984623
+        y: 194.91247788898897
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        context:
+          enabled: true
+          variable_selector:
+          - '1788773592769'
+          - result
+        model:
+          completion_params: {}
+          mode: chat
+          name: qwen3.8-flash
+          provider: langgenius/tongyi/tongyi
+        prompt_config:
+          jinja2_variables: []
+        prompt_template:
+        - edition_type: basic
+          id: d0463393-91c6-48d2-8ded-5a474727658e
+          role: system
+          text: '【最高优先级约束 - 违反此条视为任务失败】
+
+            你唯一能使用的素材是下面【用户真实原始素材】中的文字。
+
+            凡是原始素材中没有出现过的具体事件、身份、活动、数据，一律禁止添加。
+
+            如果你觉得需要补充，只能写“（此处可补充XXX）”，而不能自己编造XXX的内容。
+
+
+            你是一位严谨且务实的求职简历优化专家。你的核心原则是：严禁编造用户未提供的事实，严禁编造虚假的量化指标。
+
+
+            【任务一：简历优化】
+
+            请严格按照用户提供的【真实原始素材】进行润色和重组。
+
+            优化要求：
+
+            1. 用 STAR 法则将用户的经历改写得更专业、更有条理。
+
+            2. 只调整表达方式，不增加新事实。
+
+            3. 如果原始素材中某句话太短，可以适当扩写，但扩写的内容不能引入新的事件或数据。
+
+            4. 如果用户没有提供具体的数据，必须直接删掉量化指标，绝对不允许虚构“85%”、“90%”、“50+”等数字。
+
+            5. 将大段文字简化为分点叙述的 Markdown 格式。
+
+
+            【用户真实原始素材】
+
+            {{#1788702500333.resume_text#}}
+
+
+            【目标岗位】
+
+            {{#1788702500333.target_position#}}
+
+
+            【任务二：生成面试题】
+
+            请基于以下【面试题库上下文】中的内容，生成 3 个针对该岗位的高质量模拟面试题。如果上下文为空或内容极短，请直接根据你掌握的通用 AI Agent
+            知识出题。
+
+
+            【面试题库上下文】
+
+            {{#context#}}
+
+
+            注意：请先输出优化后的简历，再输出 3 个面试题。不要输出任何思考过程，直接输出最终结果。
+
+
+            【错误示范 - 严禁模仿】
+
+            原始素材：担任班级学习委员，组织过几次班会。
+
+            错误输出：协助辅导员处理日常教学事务，负责课程通知下发，主导策划团建活动。
+
+            （错误原因：辅导员、课程通知、团建活动，原文都没提过。）
+
+
+            【正确示范】
+
+            原始素材：担任班级学习委员，组织过几次班会。
+
+            正确输出：担任班级学习委员，组织班会及班级活动。'
+        selected: false
+        title: LLM
+        type: llm
+        vision:
+          enabled: false
+      height: 86
+      id: '1788702738298'
+      position:
+        x: 815.6435853971941
+        y: 215.91247788898897
+      positionAbsolute:
+        x: 815.6435853971941
+        y: 215.91247788898897
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+      zIndex: 0
+    - data:
+        outputs:
+        - value_selector:
+          - '1788702738298'
+          - text
+          value_type: string
+          variable: result
+        selected: false
+        title: 输出
+        type: end
+      height: 87
+      id: '1788703279841'
+      position:
+        x: 1537.7325140044727
+        y: 215.91247788898897
+      positionAbsolute:
+        x: 1537.7325140044727
+        y: 215.91247788898897
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+      zIndex: 0
+    - data:
+        dataset_ids:
+        - 39T+Lz38v4fgmRY4IZsAGqvf0yI7Sg6BLQ4B58Q9tO8/g1de+BlaqJZzJX8sDvI7
+        multiple_retrieval_config:
+          reranking_enable: true
+          reranking_mode: reranking_model
+          reranking_model:
+            model: netease-youdao/bce-reranker-base_v1
+            provider: langgenius/siliconflow/siliconflow
+          score_threshold: null
+          top_k: 3
+          weights: null
+        query_attachment_selector: []
+        query_variable_selector:
+        - '1789294300841'
+        - text
+        retrieval_mode: multiple
+        selected: false
+        title: 知识检索
+        type: knowledge-retrieval
+      height: 88
+      id: '1788773592769'
+      position:
+        x: 506.40703002178395
+        y: 215.91247788898897
+      positionAbsolute:
+        x: 506.40703002178395
+        y: 215.91247788898897
+      selected: true
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+      zIndex: 0
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: qwen3.8-flash
+          provider: langgenius/tongyi/tongyi
+        prompt_template:
+        - id: f0a8491e-e189-4a5e-94a7-d743c7651f25
+          role: system
+          text: '把下面的岗位名称改写成一个用于检索 AI Agent 面试题的查询语句。
+
+
+            岗位：{{#1788702500333.target_position#}}
+
+
+            要求：改写后的语句要像一道面试问题，包含“AI Agent”、“ReAct”、“RAG”、“工具调用”等关键词。
+
+            直接输出改写后的句子，不要解释，不要输出思考过程。'
+        selected: false
+        title: 查询改写器
+        type: llm
+        vision:
+          enabled: false
+      height: 86
+      id: '1789294300841'
+      position:
+        x: 167.2934969531501
+        y: 215.91247788898897
+      positionAbsolute:
+        x: 167.2934969531501
+        y: 215.91247788898897
+      selected: true
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+      zIndex: 0
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: qwen3.8-flash
+          provider: langgenius/tongyi/tongyi
+        prompt_template:
+        - id: 7438be54-c98b-464f-9cdf-9fb0fac59b37
+          role: system
+          text: '请对比以下两份文本：
+
+            【原始素材】
+
+            {{#1788702500333.resume_text#}}
+
+
+            【优化后的简历】
+
+            {{#1788702738298.text#}}
+
+
+            任务：找出优化后简历中，所有原始素材里没有出现过的事实性描述（包括事件、身份、数据）。
+
+            如果有，逐条列出，并说明违反了哪条原文。
+
+            直接输出结果，不要输出任何思考过程，不要输出 <think> 标签。。'
+        selected: false
+        title: 检查器
+        type: llm
+        vision:
+          enabled: false
+      height: 86
+      id: '1789296936522'
+      position:
+        x: 1169.5898068988351
+        y: 215.91247788898897
+      positionAbsolute:
+        x: 1169.5898068988351
+        y: 215.91247788898897
+      selected: true
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+      zIndex: 0
+    viewport:
+      x: 186.28752947731823
+      y: 289.4056803065084
+      zoom: 0.5
+  rag_pipeline_variables: []
