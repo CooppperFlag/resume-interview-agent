@@ -25,4 +25,8 @@
 5. 运行：`python3 test_dify.py`
 
 ## 效果展示
-(此处后续补充截图)
+<img width="721" height="1305" alt="image" src="https://github.com/user-attachments/assets/429944b4-3f41-4fe8-ab8d-f9b4c903ed35" />
+<img width="1365" height="1184" alt="image" src="https://github.com/user-attachments/assets/78bc7a27-d054-483e-9eb0-740894d8e5e0" />
+<img width="1386" height="1193" alt="image" src="https://github.com/user-attachments/assets/0ce783fe-ba63-410b-900d-b99406e54031" />
+
+
