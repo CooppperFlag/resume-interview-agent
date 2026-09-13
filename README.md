@@ -23,6 +23,8 @@
 3. 安装依赖：`pip install requests`
 4. 修改脚本里的 API_KEY
 5. 运行：`python3 test_dify.py`
+6. ## 工作流配置
+本项目的工作流完整 DSL 配置文件已上传至dify_workflow_config/目录，可直接导入 Dify 复用。
 
 ## 效果展示
 <img width="721" height="1305" alt="image" src="https://github.com/user-attachments/assets/429944b4-3f41-4fe8-ab8d-f9b4c903ed35" />
